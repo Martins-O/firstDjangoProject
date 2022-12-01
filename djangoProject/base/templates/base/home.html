@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'main.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+    <h1>Home Templates</h1>
+    <div>
+        <div>
+            {% for room in rooms %}
+                <div>
+                    <h5>{{ room.id }} -- <a href="{% url 'room' room.id %}">{{ room.name }}</a></h5>
+                </div>
+                
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+</body>
+</html>
