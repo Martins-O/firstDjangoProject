@@ -1,7 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .form import RoomForm
 
-from base.models import Room
+from base.models import Room, Topic
 
 
 # # Create your views here.
@@ -20,8 +21,42 @@ def home(request):
 
 def room(request, pk):
     roam = Room.objects.get(id=pk)
+
+    topic = Topic.objects.all()
     # for i in rooms:
     #     if i['id'] == int(pk):
     #         roam = i
-    context = {'roam': roam}
+    context = {'roam': roam, 'topic': topic}
     return render(request, 'base/Room.html', context)
+
+
+def createRoom(request):
+    form = RoomForm
+    if request.method == 'POST':
+        # request.POST.get('name')
+        form = RoomForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    context = {'form': form}
+    return render(request, 'base/room_form.html', context)
+
+
+def updateRoom(request, pk):
+    roam = Room.objects.get(id=pk)
+    form = RoomForm(instance=roam)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=roam)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    context = {'form': form}
+    return render(request, 'base/room_form.html', context)
+
+
+def deleteRoom(request, pk):
+    room = Room.objects.get(id=pk)
+    if request.method == 'POST':
+        room.delete()
+        return redirect('home')
+    return render(request, 'base/delete.html', {'obj': room})
